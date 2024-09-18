@@ -45,9 +45,42 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const tabId = parseInt(this.getAttribute('data-tab-id'));
                 await chrome.tabs.remove(tabId);
                 this.closest('li').remove();
+                adjustPopupHeight(); // 在关闭标签后调整高度
             });
         });
+
+        // 添加以下代码来调整弹出窗口的高度
+        adjustPopupHeight();
+
     } catch (error) {
         console.error('An error occurred:', error);
     }
 });
+
+// 添加这个新函数来调��弹出窗口的高度
+function adjustPopupHeight() {
+    const header = document.querySelector('.header');
+    const content = document.querySelector('.content');
+    const footer = document.querySelector('.footer');
+    const infoMessage = document.getElementById('infoMessage');
+    const tabList = document.getElementById('tabList');
+
+    // 计算信息文本的实际高度
+    const infoMessageHeight = infoMessage.offsetHeight;
+
+    // 计算标签列表的高度
+    const tabListHeight = tabList.offsetHeight;
+
+    // 计算总高度，包括页眉、信息文本、标签列表和页脚
+    const totalHeight = header.offsetHeight + infoMessageHeight + tabListHeight + footer.offsetHeight + 16; // 添加16px作为内边距
+
+    const maxHeight = 640;
+
+    if (totalHeight < maxHeight) {
+        document.body.style.height = totalHeight + 'px';
+        content.style.height = (totalHeight - header.offsetHeight - footer.offsetHeight) + 'px';
+    } else {
+        document.body.style.height = maxHeight + 'px';
+        content.style.height = (maxHeight - header.offsetHeight - footer.offsetHeight) + 'px';
+    }
+}
