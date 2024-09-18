@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         const tabs = await chrome.tabs.query({});
         const items = await chrome.storage.local.get(null);
         const tabList = document.getElementById('tabList');
+        const infoMessage = document.getElementById('infoMessage');
+
+        // Display info message
+        infoMessage.textContent = "All tabs are sorted by their opening time, from earliest to latest. This helps you decide which tabs to close.";
 
         const tabsInfo = tabs
             .filter(tab => !/onetab/i.test(tab.title))
@@ -14,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 url: tab.url,
                 openTime: items[tab.id] || Date.now()
             }))
-            .sort((a, b) => a.openTime - b.openTime);
+            .sort((a, b) => a.openTime - b.openTime);  // Sort by opening time, earliest first
 
         tabsInfo.forEach(function ({ id, title, url }) {
             const li = document.createElement('li');
