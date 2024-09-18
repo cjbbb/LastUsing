@@ -2,7 +2,7 @@
 
 // Track tab opening time
 chrome.tabs.onCreated.addListener(function (tab) {
-    chrome.storage.local.set({ [tab.id]: Date.now() });
+    chrome.storage.local.set({ [tab.id.toString()]: Date.now() });
 });
 
 // Remove stored data when tab is closed
@@ -17,8 +17,15 @@ chrome.alarms.create("updateData", { periodInMinutes: 1 });
 function updateData() {
     chrome.tabs.query({}, function (tabs) {
         chrome.storage.local.get(null, function (items) {
-            // Update data if needed
-            // This function can be used to perform any periodic updates
+            const updates = {};
+            tabs.forEach(tab => {
+                if (!items[tab.id.toString()]) {
+                    updates[tab.id.toString()] = Date.now();
+                }
+            });
+            if (Object.keys(updates).length > 0) {
+                chrome.storage.local.set(updates);
+            }
         });
     });
 }

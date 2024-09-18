@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 id: tab.id,
                 title: tab.title,
                 url: tab.url,
-                openTime: items[tab.id] || Date.now()
+                openTime: items[tab.id.toString()] || Date.now()
             }))
             .sort((a, b) => a.openTime - b.openTime);  // Sort by opening time, earliest first
 
